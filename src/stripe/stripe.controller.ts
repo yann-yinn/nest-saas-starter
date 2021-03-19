@@ -23,7 +23,7 @@ export class StripeController {
    * qui pourra être utilisé par le client pour redirigé vers Stripe Checkout. 
    */
   @Post("create-checkout-session")
-  async createCheckoutSession(@Res() res: Response, @Req() req: Request, @Body() createCheckoutSessionDto: createCheckoutSessionDto) {
+  async createCheckoutSession(@Req() req: Request, @Body() createCheckoutSessionDto: createCheckoutSessionDto) {
     const priceId: string = req.body.priceId;
     let checkoutConfig: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
@@ -56,7 +56,7 @@ export class StripeController {
    * comme un abonnement acheté avec succès.
    */
   @Post('webhooks')
-  async webhooks(@Res() res: Response, @Req() req: Request) {
+  async webhooks(@Req() req: Request) {
 
     if (!this.configService.get('stripeWebhookSecret')) {
       throw new HttpException({
@@ -83,7 +83,7 @@ export class StripeController {
   }
 
   @Post('create-customer-portal-session')
-  async createCustomerPortalSession(@Res() res: Response, @Req() req: Request) {
+  async createCustomerPortalSession(@Req() req: Request) {
 
     const portalConfig: Stripe.BillingPortal.SessionCreateParams = {
       customer: undefined,
