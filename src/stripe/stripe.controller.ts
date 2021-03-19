@@ -1,8 +1,8 @@
-import { Controller, Get, Req, Res, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { AdapterService } from './adapter.service';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import Stripe from "stripe";
 import { createCheckoutSessionDto } from "./dto";
 
@@ -25,7 +25,8 @@ export class StripeController {
   @Post("create-checkout-session")
   async createCheckoutSession(@Req() req: Request, @Body() createCheckoutSessionDto: createCheckoutSessionDto) {
     const priceId: string = req.body.priceId;
-    let checkoutConfig: Stripe.Checkout.SessionCreateParams = {
+
+    let config: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
@@ -43,11 +44,11 @@ export class StripeController {
     
     await this.adapterService.onCreateCheckoutSession({
       req,
-      checkoutConfig,
+      config,
       priceId,
     });
 
-    const session = await this.stripeService.getStripe().checkout.sessions.create(checkoutConfig);
+    const session = await this.stripeService.getStripe().checkout.sessions.create(config);
     return { sessionId: session.id }
   }
 
@@ -85,22 +86,22 @@ export class StripeController {
   @Post('create-customer-portal-session')
   async createCustomerPortalSession(@Req() req: Request) {
 
-    const portalConfig: Stripe.BillingPortal.SessionCreateParams = {
+    const config: Stripe.BillingPortal.SessionCreateParams = {
       customer: undefined,
       return_url: this.configService.get('stripeBillingReturnUrl'),
     }
 
-    await this.adapterService.onCreateCustomerPortalSession({ req, portalConfig });
+    await this.adapterService.onCreateCustomerPortalSession({ req, config });
 
-    if (!portalConfig.customer) {
+    if (!config.customer) {
       throw new HttpException({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: '"customerId" is missing: ' + portalConfig.customer,
+        message: '"customerId" is missing: ' + config.customer,
       }, HttpStatus.INTERNAL_SERVER_ERROR);
     } 
 
     try {
-      const portalsession = await this.stripeService.getStripe().billingPortal.sessions.create(portalConfig);
+      const portalsession = await this.stripeService.getStripe().billingPortal.sessions.create(config);
       return { url: portalsession.url };
     } 
     catch (error) {
