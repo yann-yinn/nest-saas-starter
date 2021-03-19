@@ -12,23 +12,13 @@ export class StripeController {
 
   @Get('plans')
   getPlans() {
-   return this.stripeService.getPlans()
+    return this.stripeService.getPlans();
   }
 
   @Post("create-checkout-session")
   async createCheckoutSession(@Res() res: Response, @Req() req: Request, @Body() createCheckoutSessionDto: createCheckoutSessionDto) {
     const priceId: string = req.body.priceId;
-
-    if (!priceId) {
-      res.status(400);
-      res.send({
-        error: {
-          message:
-            'Error: "priceId" is missing. Your request body Should contain a stringified JSON with a priceId property: {"priceId": "abc"}',
-        },
-      });
-    }
-  
+    
     try {
       let checkoutConfig: Stripe.Checkout.SessionCreateParams = {
         mode: "subscription",
