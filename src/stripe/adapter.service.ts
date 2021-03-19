@@ -8,9 +8,26 @@ interface onCreateCheckoutSessionParams {
   priceId: string
 }
 
+interface onWebhooksParams {
+  req: Request,
+  event: Stripe.Event;
+}
+
+interface onCreateCustomerPortalSessionPrams {
+  portalConfig: Stripe.BillingPortal.SessionCreateParams;
+  req: Request,
+}
+
+
 @Injectable()
 export class AdapterService {
-  async onCreateCheckoutSession(params: onCreateCheckoutSessionParams) {}
-  // async onWehbooks({ req, checkoutConfig }) {}
-  //async onCreateCustomerPortalSession({ req, checkoutConfig }) {}
+  async onCreateCheckoutSession(params: onCreateCheckoutSessionParams) {
+
+  }
+  async onWebhooks(params: onWebhooksParams) {
+
+  }
+  async onCreateCustomerPortalSession(params: onCreateCustomerPortalSessionPrams) {
+    
+  }
 }

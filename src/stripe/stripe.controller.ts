@@ -11,7 +11,7 @@ export class StripeController {
   constructor(private readonly stripeService: StripeService, private configService: ConfigService,  private adapterService: AdapterService) {}
 
   @Get('plans')
-  getPlans(): Promise<object[]> {
+  getPlans() {
    return this.stripeService.getPlans()
   }
 
@@ -66,4 +66,68 @@ export class StripeController {
     }
   }
 
+  @Get('webhooks')
+  async webhooks(@Res() res: Response, @Req() req: Request) {
+
+    const signature = req.headers["stripe-signature"];
+    if (!this.configService.get('stripeWebhookSecret')) {
+      res.status(400);
+      res.send({
+        error: {
+          message: "config.stripeWebhookSecret is not defined",
+        },
+      });
+      return;
+    }
+    try {
+      const event = this.stripeService.getStripe().webhooks.constructEvent(
+        req.body,
+        signature,
+        this.configService.get('stripeWebhookSecret')
+      );
+      await this.adapterService.onWebhooks({ req, event });
+      return { status: "ok" }
+    } catch (e) {
+      console.log("e", e);
+      res.status(400).send({
+        error: {
+          message: e.message,
+        },
+      });
+      return;
+    }
+  }
+
+  @Get('create-customer-portal-session')
+  async createCustomerPortalSession(@Res() res: Response, @Req() req: Request) {
+
+    const portalConfig: Stripe.BillingPortal.SessionCreateParams = {
+      customer: undefined,
+      return_url: this.configService.get('stripeBillingReturnUrl'),
+    }
+
+    await this.adapterService.onCreateCustomerPortalSession({ req, portalConfig });
+
+    if (!portalConfig.customer) {
+      res.status(400).send({
+        error: {
+          message: 'Error: "customerId" is required. Received: ' + portalConfig.customer,
+        },
+      });
+    } else {
+      try {
+        const portalsession = await this.stripeService.getStripe().billingPortal.sessions.create(portalConfig);
+        res.send({
+          url: portalsession.url,
+        });
+      } catch (e) {
+        res.status(400);
+        res.send({
+          error: {
+            message: e.message,
+          },
+        });
+      }
+    }
+  }
 }
