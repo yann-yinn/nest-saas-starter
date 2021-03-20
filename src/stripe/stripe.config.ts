@@ -1,9 +1,11 @@
 /**
  * @file gérer la configuration de votre gestion des abonnements:
  */
-export default ()  => ({
+export default () => ({
   // voir le fichier.env.example
-  prices: <string[]>process.env.STRIPE_PRICES_IDS!.split(",").map((v) => v.trim()),
+  prices: <string[]>(
+    process.env.STRIPE_PRICES_IDS!.split(',').map((v) => v.trim())
+  ),
   // voir le fichier .env.example
   stripeSecretKey: <string>process.env.STRIPE_SECRET_KEY!.trim(),
   // voir le fichier .env.example

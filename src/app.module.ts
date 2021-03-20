@@ -6,7 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import stripeConfig from './stripe/stripe.config';
 
 @Module({
-  imports: [StripeModule, ConfigModule.forRoot({ isGlobal: true, load: [stripeConfig], })],
+  imports: [
+    StripeModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [stripeConfig] }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,14 +1,26 @@
-import { Controller, Get, Req, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Post,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { AdapterService } from './adapter.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import Stripe from "stripe";
-import { createCheckoutSessionDto } from "./dto";
+import Stripe from 'stripe';
+import { createCheckoutSessionDto } from './dto';
 
 @Controller('api/stripe')
 export class StripeController {
-  constructor(private readonly stripeService: StripeService, private configService: ConfigService,  private adapterService: AdapterService) {}
+  constructor(
+    private readonly stripeService: StripeService,
+    private configService: ConfigService,
+    private adapterService: AdapterService,
+  ) {}
 
   /**
    * Récupérer la liste des plans depuis Stripe.
@@ -20,15 +32,18 @@ export class StripeController {
 
   /**
    * Commence une nouvelle session d'achat. Retourne un sessionId
-   * qui pourra être utilisé par le client pour redirigé vers Stripe Checkout. 
+   * qui pourra être utilisé par le client pour redirigé vers Stripe Checkout.
    */
-  @Post("create-checkout-session")
-  async createCheckoutSession(@Req() req: Request, @Body() createCheckoutSessionDto: createCheckoutSessionDto) {
+  @Post('create-checkout-session')
+  async createCheckoutSession(
+    @Req() req: Request,
+    @Body() createCheckoutSessionDto: createCheckoutSessionDto,
+  ) {
     const priceId: string = req.body.priceId;
 
     let config: Stripe.Checkout.SessionCreateParams = {
-      mode: "subscription",
-      payment_method_types: ["card"],
+      mode: 'subscription',
+      payment_method_types: ['card'],
       line_items: [
         {
           price: priceId,
@@ -41,15 +56,17 @@ export class StripeController {
       // en cas d'annulation du paiement, rediriger le visiteur à cette adresse:
       cancel_url: <string>this.configService.get('stripeCheckoutCancelUrl'),
     };
-    
+
     await this.adapterService.onCreateCheckoutSession({
       req,
       config,
       priceId,
     });
 
-    const session = await this.stripeService.getStripe().checkout.sessions.create(config);
-    return { sessionId: session.id }
+    const session = await this.stripeService
+      .getStripe()
+      .checkout.sessions.create(config);
+    return { sessionId: session.id };
   }
 
   /**
@@ -58,58 +75,69 @@ export class StripeController {
    */
   @Post('webhooks')
   async webhooks(@Req() req: Request) {
-
     if (!this.configService.get('stripeWebhookSecret')) {
-      throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'process.env.stripeWebhookSecret is not defined.',
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'process.env.stripeWebhookSecret is not defined.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     try {
-      const event = this.stripeService.getStripe().webhooks.constructEvent(
-        req.body,
-        <string>req.headers["stripe-signature"],
-        <string>this.configService.get('stripeWebhookSecret')
-      );
+      const event = this.stripeService
+        .getStripe()
+        .webhooks.constructEvent(
+          req.body,
+          <string>req.headers['stripe-signature'],
+          <string>this.configService.get('stripeWebhookSecret'),
+        );
       await this.adapterService.onWebhooks({ req, event });
-      return { status: "ok" };
-    } 
-    catch (error) {
-      throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      return { status: 'ok' };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Post('create-customer-portal-session')
   async createCustomerPortalSession(@Req() req: Request) {
-
     const config: Stripe.BillingPortal.SessionCreateParams = {
-      customer: "",
+      customer: '',
       return_url: this.configService.get('stripeBillingReturnUrl'),
-    }
+    };
 
     await this.adapterService.onCreateCustomerPortalSession({ req, config });
 
     if (!config.customer) {
-      throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: '"customerId" is missing: ' + config.customer,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
-    } 
-
-    try {
-      const portalsession = await this.stripeService.getStripe().billingPortal.sessions.create(config);
-      return { url: portalsession.url };
-    } 
-    catch (error) {
-      throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: '"customerId" is missing: ' + config.customer,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
+    try {
+      const portalsession = await this.stripeService
+        .getStripe()
+        .billingPortal.sessions.create(config);
+      return { url: portalsession.url };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

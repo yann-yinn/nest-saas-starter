@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Stripe from "stripe"
+import Stripe from 'stripe';
 
 @Injectable()
 export class StripeService {
-  constructor( private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {}
 
   getStripe(): Stripe {
     return new Stripe(<string>this.configService.get('stripeSecretKey'), {
@@ -14,15 +14,19 @@ export class StripeService {
 
   async getPlans(): Promise<object[]> {
     const prices = <string[]>this.configService.get('prices');
-    const plans: object[] = await Promise.all(
+    const plans = await Promise.all(
       prices.map((priceId) => {
-        return this.getStripe().plans.retrieve(priceId).then((plan) => {
-          return this.getStripe().products.retrieve(<string>plan.product).then((product) => {
-            plan.product = product;
-            return plan;
+        return this.getStripe()
+          .plans.retrieve(priceId)
+          .then((plan) => {
+            return this.getStripe()
+              .products.retrieve(<string>plan.product)
+              .then((product) => {
+                plan.product = product;
+                return plan;
+              });
           });
-        });
-      })
+      }),
     );
     return plans;
   }
