@@ -37,9 +37,9 @@ export class StripeController {
         },
       ],
       // en cas de succès du paiement, le visiteur sera redirigé à cette adresse:
-      success_url: this.configService.get('stripeCheckoutSuccessUrl'),
+      success_url: <string>this.configService.get('stripeCheckoutSuccessUrl'),
       // en cas d'annulation du paiement, rediriger le visiteur à cette adresse:
-      cancel_url: this.configService.get('stripeCheckoutCancelUrl'),
+      cancel_url: <string>this.configService.get('stripeCheckoutCancelUrl'),
     };
     
     await this.adapterService.onCreateCheckoutSession({
@@ -69,8 +69,8 @@ export class StripeController {
     try {
       const event = this.stripeService.getStripe().webhooks.constructEvent(
         req.body,
-        req.headers["stripe-signature"],
-        this.configService.get('stripeWebhookSecret')
+        <string>req.headers["stripe-signature"],
+        <string>this.configService.get('stripeWebhookSecret')
       );
       await this.adapterService.onWebhooks({ req, event });
       return { status: "ok" };
@@ -87,7 +87,7 @@ export class StripeController {
   async createCustomerPortalSession(@Req() req: Request) {
 
     const config: Stripe.BillingPortal.SessionCreateParams = {
-      customer: undefined,
+      customer: "",
       return_url: this.configService.get('stripeBillingReturnUrl'),
     }
 
