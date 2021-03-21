@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { StripeModule } from './stripe/stripe.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+//import { UsersModule } from './users/users.module';
 import stripeConfig from './stripe/stripe.config';
 import authConfig from './auth/auth.config';
 import appConfig from './app.config';
@@ -19,17 +19,18 @@ import { ConfigService } from '@nestjs/config';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      connectionName: 'default',
-      useFactory: async (config: ConfigService) => ({
-        uri: config.get('mongoUrl'),
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }),
+      useFactory: async (config: ConfigService) => {
+        return {
+          uri: config.get('mongoUrl'),
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        };
+      },
       inject: [ConfigService],
     }),
     StripeModule,
     AuthModule,
-    UsersModule,
+    //UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
