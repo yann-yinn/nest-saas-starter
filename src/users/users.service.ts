@@ -21,17 +21,15 @@ export class UsersService {
     },
   ];
 
-  async create() {}
-
-  async update() {}
-
-  async findOneByEmail() {}
+  async findOneByEmail(email: string): Promise<User | undefined> {
+    return this.userModel.findOne({ email });
+  }
 
   async findOne(username: string): Promise<User | undefined> {
     return this.users.find((user) => user.username === username);
   }
 
-  async findAll() {
+  async find() {
     return this.userModel.find();
   }
 }
