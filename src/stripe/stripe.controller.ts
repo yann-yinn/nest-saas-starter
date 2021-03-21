@@ -86,7 +86,7 @@ export class StripeController {
     }
 
     try {
-      const event = this.stripeService
+      const event: Stripe.Event = this.stripeService
         .getStripe()
         .webhooks.constructEvent(
           req.body,
