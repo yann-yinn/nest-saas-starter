@@ -12,7 +12,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  passwordEncryt() {}
+
   async validateUser(username: string, pass: string): Promise<any> {
+    // @FIXME: password encryption to find user
     const user = await this.usersService.findOne(username);
     if (user && user.password === pass) {
       const { password, ...result } = user;
