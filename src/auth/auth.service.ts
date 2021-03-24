@@ -15,7 +15,6 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     // @FIXME: password encryption to find user
     const user = await this.usersService.findOneByEmail(email);
-    console.log('user', user);
     if (user && user.password === password) {
       return user;
     }
