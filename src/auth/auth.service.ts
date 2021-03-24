@@ -12,20 +12,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  passwordEncryt() {}
-
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<any> {
     // @FIXME: password encryption to find user
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+    const user = await this.usersService.findOneByEmail(email);
+    console.log('user', user);
+    if (user && user.password === password) {
+      return user;
     }
     return null;
   }
 
   async generateJwt(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { name: user.name, sub: user._id };
     return {
       access_token: this.jwtService.sign(payload),
     };
