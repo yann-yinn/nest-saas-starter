@@ -10,6 +10,7 @@ import authConfig from './auth/auth.config';
 import appConfig from './app.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
+import { ExampleModule } from './example/example.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ConfigService } from '@nestjs/config';
     }),
     StripeModule,
     AuthModule,
+    ExampleModule,
     //UsersModule,
   ],
   controllers: [AppController],

@@ -119,7 +119,7 @@ export class StripeController {
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: '"customerId" is missing: ' + config.customer,
+          message: 'customerId" is missing',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
