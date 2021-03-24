@@ -27,3 +27,14 @@ export class UpdateCustomerDto extends PartialType(CreateUserDto) {
   @IsString()
   readonly password!: string;
 }
+
+export class loginUserDto {
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  readonly email!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly password!: string;
+}
