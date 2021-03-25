@@ -6,9 +6,14 @@ import { UsersController } from './users.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './local.strategy';
+import { ConfigModule } from '@nestjs/config';
+import usersConfig from './users.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [usersConfig],
+    }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {

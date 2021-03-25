@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { StripeModule } from './stripe/stripe.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import stripeConfig from './stripe/stripe.config';
-import usersConfig from './users/users.config';
 import appConfig from './app.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
@@ -14,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [stripeConfig, usersConfig, appConfig],
+      load: [appConfig],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
