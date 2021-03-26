@@ -32,6 +32,10 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
+  async findOne(filter: object): Promise<User | null> {
+    return await this.userModel.findOne(filter).lean().exec();
+  }
+
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.userModel.findOne({ email }).lean().exec();
   }
@@ -46,7 +50,7 @@ export class UsersService {
   }
 
   async generateJwt(user: any) {
-    const payload = { name: user.name, sub: user._id };
+    const payload = { username: user.name, sub: user._id };
     return {
       access_token: this.jwtService.sign(payload),
     };

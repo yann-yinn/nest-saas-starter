@@ -6,6 +6,7 @@ import {
   Request,
   HttpStatus,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto';
@@ -28,5 +29,11 @@ export class UsersController {
   @Post('login')
   async login(@Request() req: any, @Body() loginUserDto: loginUserDto) {
     return this.usersService.generateJwt(req.user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  async userinfo(@Request() req: any, @Body() loginUserDto: loginUserDto) {
+    return req.user;
   }
 }
