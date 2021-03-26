@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsString()
@@ -15,25 +16,9 @@ export class CreateUserDto {
   readonly password!: string;
 }
 
-export class UpdateCustomerDto {
-  @IsString()
-  readonly name!: string;
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
 
-  @IsString()
-  @IsEmail()
-  readonly email!: string;
-
-  @IsString()
-  readonly password!: string;
-}
-
-export class loginUserDto {
-  @IsString()
-  @IsEmail()
-  @IsNotEmpty()
-  readonly email!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  readonly password!: string;
-}
+export class loginUserDto extends PickType(CreateUserDto, [
+  'email',
+  'password',
+] as const) {}
