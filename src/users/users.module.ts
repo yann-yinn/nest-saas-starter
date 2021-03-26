@@ -21,7 +21,7 @@ import usersConfig from './users.config';
         return {
           secret: configService.get('authJwtSecretKey'),
           signOptions: {
-            expiresIn: 3600,
+            expiresIn: '7 days',
           },
         };
       },
