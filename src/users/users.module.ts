@@ -6,6 +6,7 @@ import { UsersController } from './users.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './passport/local.strategy';
+import { JwtStrategy } from './passport/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import usersConfig from './users.config';
 
@@ -27,7 +28,7 @@ import usersConfig from './users.config';
       inject: [ConfigService],
     }),
   ],
-  providers: [UsersService, LocalStrategy],
+  providers: [UsersService, LocalStrategy, JwtStrategy],
   controllers: [UsersController],
   exports: [UsersService],
 })

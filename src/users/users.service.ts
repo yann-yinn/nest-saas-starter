@@ -32,8 +32,8 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
-  async findOne(filter: object): Promise<User | null> {
-    return await this.userModel.findOne(filter).lean().exec();
+  async findOne(filter: object, project?: object): Promise<User | null> {
+    return await this.userModel.findOne(filter, project).lean().exec();
   }
 
   async findOneByEmail(email: string): Promise<User | null> {

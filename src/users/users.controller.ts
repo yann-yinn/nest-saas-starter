@@ -33,7 +33,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  async userinfo(@Request() req: any, @Body() loginUserDto: loginUserDto) {
+  async me(@Request() req: any) {
     return req.user;
   }
 }

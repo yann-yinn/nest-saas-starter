@@ -21,10 +21,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Here we could do a database lookup in our validate() method to extract
     // more information about the user, resulting in a more enriched
     // user object being available in our Request
-    const fullUser = this.usersService.findOne({
-      _id: payload.sub,
-    });
-    console.log('fullUser', fullUser);
+    const fullUser = this.usersService.findOne(
+      {
+        _id: payload.sub,
+      },
+      { name: 1, email: 1 },
+    );
+
     if (!fullUser) {
       return null;
     }
