@@ -17,17 +17,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Object returned by this method will fill req.user object.
+   *
+   * @param payload
+   * @returns
+   */
   async validate(payload: any) {
     // Here we could do a database lookup in our validate() method to extract
     // more information about the user, resulting in a more enriched
     // user object being available in our Request
+    const publicFields = { name: 1, email: 1 };
     const fullUser = this.usersService.findOne(
       {
         _id: payload.sub,
       },
-      { name: 1, email: 1 },
+      publicFields,
     );
-
     if (!fullUser) {
       return null;
     }

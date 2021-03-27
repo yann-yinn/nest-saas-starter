@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
-import { User } from './users.interfaces';
+import { User, UserToken } from './users.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -49,10 +49,12 @@ export class UsersService {
     return null;
   }
 
-  async generateJwt(user: any) {
-    const payload = { username: user.name, sub: user._id };
+  // JWT properties https://www.iana.org/assignments/jwt/jwt.xhtml
+  async generateJwt(user: User): Promise<{ access_token: string }> {
+    const payload: UserToken = { name: user.name, sub: user._id };
+    const accessToken: string = this.jwtService.sign(payload);
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
     };
   }
 }
