@@ -50,7 +50,10 @@ export class UsersService {
   }
 
   // JWT properties https://www.iana.org/assignments/jwt/jwt.xhtml
-  async generateJwt(user: User): Promise<{ access_token: string }> {
+  async generateJwt(user: {
+    name: string;
+    _id: string;
+  }): Promise<{ access_token: string }> {
     const payload: UserToken = { name: user.name, sub: user._id };
     const accessToken: string = this.jwtService.sign(payload);
     return {
