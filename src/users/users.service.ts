@@ -2,16 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
-import { User, UserTokenPayload } from './users.interfaces';
-import { JwtService } from '@nestjs/jwt';
+import { User } from './users.interfaces';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel('User') private userModel: Model<User | any>,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(@InjectModel('User') private userModel: Model<User | any>) {}
 
   /**
    * Create a new user, except if a user with the same email already exists
@@ -38,26 +34,5 @@ export class UsersService {
 
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.userModel.findOne({ email }).lean().exec();
-  }
-
-  async validateUser(email: string, password: string): Promise<any> {
-    // @FIXME: password encryption to find user
-    const user = await this.findOneByEmail(email);
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
-    }
-    return null;
-  }
-
-  // JWT properties https://www.iana.org/assignments/jwt/jwt.xhtml
-  async generateJwt(user: {
-    name: string;
-    _id: string;
-  }): Promise<{ access_token: string }> {
-    const payload: UserTokenPayload = { name: user.name, sub: user._id };
-    const accessToken: string = this.jwtService.sign(payload);
-    return {
-      access_token: accessToken,
-    };
   }
 }

@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import appConfig from './app.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
+import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ConfigService } from '@nestjs/config';
     }),
     StripeModule,
     UsersModule,
+    AuthJwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,12 +1,12 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users.service';
-import { User } from '../users.interfaces';
+import { AuthJwtService } from '../auth-jwt.service';
+import { User } from '../../users/users.interfaces';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private usersService: UsersService) {
+  constructor(private authJwtService: AuthJwtService) {
     // Login by email instead of default username field.
     super({ usernameField: 'email' });
   }
@@ -18,7 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
    */
   async validate(username: string, password: string): Promise<User> {
     // actually, here "username" is the "email" field.
-    const user = await this.usersService.validateUser(username, password);
+    const user = await this.authJwtService.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException();
     }
