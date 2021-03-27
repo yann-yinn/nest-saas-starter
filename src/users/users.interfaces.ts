@@ -5,7 +5,7 @@ export interface User {
   password: string;
 }
 
-export interface UserToken {
+export interface UserTokenPayload {
   name: string;
   sub: string;
   // seront remplis automatiquement par la méthode jwt.sign()

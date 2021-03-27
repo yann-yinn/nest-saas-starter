@@ -3,12 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users.service';
+import { User, UserTokenPayload } from '../users.interfaces';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private configService: ConfigService,
-    private usersService: UsersService,
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -18,25 +19,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   /**
+   * Trigger by "@UseGuards(AuthGuard('jwt'))" on a controller.
    * Object returned by this method will fill req.user object.
    *
    * @param payload
    * @returns
    */
-  async validate(payload: any) {
-    // Here we could do a database lookup in our validate() method to extract
-    // more information about the user, resulting in a more enriched
-    // user object being available in our Request
-    const publicFields = { name: 1, email: 1 };
-    const fullUser = this.usersService.findOne(
+  async validate(payload: UserTokenPayload): Promise<User | null> {
+    const user = this.usersService.findOne(
       {
         _id: payload.sub,
       },
-      publicFields,
+      // do not expose password field
+      { password: 0 },
     );
-    if (!fullUser) {
-      return null;
-    }
-    return fullUser;
+    return user ? user : null;
   }
 }

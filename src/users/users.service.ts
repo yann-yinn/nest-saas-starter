@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
-import { User, UserToken } from './users.interfaces';
+import { User, UserTokenPayload } from './users.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -54,7 +54,7 @@ export class UsersService {
     name: string;
     _id: string;
   }): Promise<{ access_token: string }> {
-    const payload: UserToken = { name: user.name, sub: user._id };
+    const payload: UserTokenPayload = { name: user.name, sub: user._id };
     const accessToken: string = this.jwtService.sign(payload);
     return {
       access_token: accessToken,
