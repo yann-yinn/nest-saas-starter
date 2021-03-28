@@ -7,13 +7,20 @@ import { UsersModule } from './users/users.module';
 import appConfig from './app.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
+//import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
+import { AuthSessionModule } from './auth-session/auth-session.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig],
+    }),
+    // configure default options for passport
+    PassportModule.register({
+      defaultStrategy: 'local',
+      session: true,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -28,7 +35,8 @@ import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
     }),
     StripeModule,
     UsersModule,
-    AuthJwtModule,
+    //AuthJwtModule,
+    AuthSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
