@@ -30,6 +30,12 @@ export class AuthSessionController {
     return user;
   }
 
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  async logout(@Request() req: any) {
+    return req.user;
+  }
+
   @Get('test')
   @UseGuards(AuthGuard)
   async test(@Request() req: any) {
