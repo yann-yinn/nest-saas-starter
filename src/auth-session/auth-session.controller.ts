@@ -30,13 +30,17 @@ export class AuthSessionController {
     return user;
   }
 
-  @Post('logout')
+  /**
+   * Destroy user session from the server
+   */
+  @Get('logout')
   @UseGuards(AuthGuard)
   async logout(@Request() req: any) {
-    return req.user;
+    req.session.destroy();
+    delete req.user;
   }
 
-  @Get('test')
+  @Get('userinfo')
   @UseGuards(AuthGuard)
   async test(@Request() req: any) {
     return req.user;

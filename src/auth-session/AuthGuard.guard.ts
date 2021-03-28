@@ -7,6 +7,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = await this.usersService.findOne({ _id: request.session.user });
+    // make full user object available on each request
     request.user = user;
     return user ? true : false;
   }
