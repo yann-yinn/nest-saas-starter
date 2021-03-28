@@ -29,7 +29,12 @@ export class UsersService {
   }
 
   async findOne(filter: object, project?: object): Promise<User | null> {
-    return await this.userModel.findOne(filter, project).lean().exec();
+    const user = await this.userModel.findOne(filter, project).lean().exec();
+    if (user) {
+      delete user.password;
+      delete user.__v;
+    }
+    return user;
   }
 
   async findOneByEmail(email: string): Promise<User | null> {
