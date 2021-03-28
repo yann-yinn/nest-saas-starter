@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
-import * as passport from 'passport';
+import * as connectMongodbSession from 'connect-mongodb-session';
+const MongoDBStore = connectMongodbSession(session);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,11 +14,12 @@ async function bootstrap() {
       secret: 'my-secret',
       resave: false,
       saveUninitialized: true,
-      // cookie: { secure: false },
+      store: new MongoDBStore({
+        uri: <string>process.env.MONGO_URL,
+        collection: 'sessions',
+      }),
     }),
   );
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   await app.listen(3000);
 }

@@ -17,11 +17,11 @@ export class AuthSessionController {
   @Post('login')
   @UseGuards(AuthGuard('local'))
   async login(@Request() req: any, @Body() loginDto: loginDto) {
-    req.session.user = { _id: req.user._id };
-    return req.session;
+    req.session.user = req.user._id;
+    return req.user;
   }
   @Get('test')
   async test(@Request() req: any) {
-    return req.session.user;
+    return req.session;
   }
 }
