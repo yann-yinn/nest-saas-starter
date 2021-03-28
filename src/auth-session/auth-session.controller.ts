@@ -1,27 +1,26 @@
 import {
   Controller,
-  Get,
-  Req,
   Post,
   Body,
-  HttpException,
-  HttpStatus,
-  UseGuards,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { loginDto } from './dto';
-import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from '../users/users.service';
 
 @Controller('api/auth-session')
 export class AuthSessionController {
+  constructor(private readonly usersService: UsersService) {}
+
   @Post('login')
-  @UseGuards(AuthGuard('local'))
   async login(@Request() req: any, @Body() loginDto: loginDto) {
-    req.session.user = req.user._id;
-    return req.user;
-  }
-  @Get('test')
-  async test(@Request() req: any) {
-    return req.session;
+    const user = await this.usersService.findOneByCredentials({
+      email: loginDto.email,
+      password: loginDto.password,
+    });
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return user;
   }
 }
