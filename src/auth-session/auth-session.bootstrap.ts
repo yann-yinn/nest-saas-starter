@@ -21,6 +21,8 @@ export function authSessionBootstrap(app: INestApplication): void {
         maxAge: undefined,
         // our API might be located to another domain than our front-end
         sameSite: 'lax',
+        // only send cookie to this domain and its subdomain
+        domain: process.env.AUTH_SESSION_COOKIE_DOMAIN,
       },
       saveUninitialized: false, // do not save if req.session is an empty object {}
       store: new MongoDBStore({
