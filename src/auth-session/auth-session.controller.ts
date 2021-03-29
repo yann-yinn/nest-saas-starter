@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { loginDto } from './dto';
 import { UsersService } from '../users/users.service';
-import { AuthGuard } from './AuthGuard.guard';
+import { AuthSessionGuard } from './auth-session.guard';
 
 @Controller('api/auth-session')
 export class AuthSessionController {
@@ -34,14 +34,14 @@ export class AuthSessionController {
    * Destroy user session from the server
    */
   @Get('logout')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthSessionGuard)
   async logout(@Request() req: any) {
     req.session.destroy();
     delete req.user;
   }
 
   @Get('userinfo')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthSessionGuard)
   async test(@Request() req: any) {
     return req.user;
   }
