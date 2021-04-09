@@ -11,7 +11,11 @@ console.log('rocess.env.AUTH_SESSION_SECRET', process.env.NODE_ENV);
 export function authSessionBootstrap(app: INestApplication): void {
   app.use(
     session({
-      secret: <string>process.env.AUTH_SESSION_SECRET,
+      // Changing the secret value will invalidate all existing sessions.
+      // In order to rotate the secret without invalidating sessions,
+      // provide an array of secrets, with the new secret as first element of the array,
+      // and including previous secrets as the later elements.
+      secret: [<string>process.env.AUTH_SESSION_SECRET],
       resave: false,
       cookie: {
         path: '/',
