@@ -30,15 +30,11 @@ export class UsersService {
 
   async findOne(filter: object, project?: object): Promise<User | null> {
     const user = await this.userModel.findOne(filter, project).lean().exec();
-    if (user) {
-      delete user.password;
-      delete user.__v;
-    }
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    return await this.userModel.findOne({ email }).lean().exec();
+  async findOneByEmail(email: string, project?: object): Promise<User | null> {
+    return await this.userModel.findOne({ email }, project).lean().exec();
   }
 
   async findOneByCredentials(credentials: {
@@ -46,6 +42,13 @@ export class UsersService {
     password: string;
   }): Promise<User | null> {
     const user = await this.findOneByEmail(credentials.email);
+    if (!user) {
+      return null;
+    }
+    if (!user.password) {
+      throw new Error('findOneByCredentials: Password field is missing');
+    }
+    // compare user password with submitted password
     if (user && (await bcrypt.compare(credentials.password, user.password))) {
       return user;
     }

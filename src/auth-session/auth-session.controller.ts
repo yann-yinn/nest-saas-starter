@@ -22,12 +22,14 @@ export class AuthSessionController {
       email: loginDto.email,
       password: loginDto.password,
     });
+
     if (!user) {
       throw new UnauthorizedException();
+    } else {
+      // store the user id in session variable (thanks to express-session)
+      req.session.user = user._id;
+      return user;
     }
-    // store the user id in session variable (thanks to express-session)
-    req.session.user = user._id;
-    return user;
   }
 
   /**
