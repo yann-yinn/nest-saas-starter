@@ -20,7 +20,7 @@ import { UsersModule } from '../users/users.module';
         return {
           secret: configService.get('authJwtSecretKey'),
           signOptions: {
-            expiresIn: '7 days',
+            expiresIn: '1 day',
           },
         };
       },

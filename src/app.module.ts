@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import appConfig from './app.config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
 import { ConfigService } from '@nestjs/config';
 import { AuthSessionModule } from './auth-session/auth-session.module';
 
@@ -28,6 +29,7 @@ import { AuthSessionModule } from './auth-session/auth-session.module';
     }),
     StripeModule,
     UsersModule,
+    AuthJwtModule,
     AuthSessionModule,
   ],
   controllers: [AppController],
