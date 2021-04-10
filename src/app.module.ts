@@ -28,11 +28,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       synchronize: process.env.NODE_ENV === 'development' ? true : false,
       ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
+      extra: JSON.parse(<string>process.env.TYPEORM_DRIVER_EXTRA),
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
