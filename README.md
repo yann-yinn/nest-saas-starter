@@ -4,6 +4,11 @@
 
 ## Test API With curl
 
+```sh
+# create a new user
+curl -X POST http://localhost:3000/api/users -d '{"firstName": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json"
+```
+
 ### JWT (passport-jwt)
 
 ```sh

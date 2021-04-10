@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
-import { User } from '../../users/users.interfaces';
+import { User } from '../../users/user.entity';
 import { TokenPayload } from '../auth-jwt.interfaces';
 
 @Injectable()
@@ -26,14 +26,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @param payload
    * @returns
    */
-  async validate(payload: TokenPayload): Promise<User | null> {
-    const user = this.usersService.findOne(
-      {
-        _id: payload.sub,
-      },
-      // do not expose password field
-      { password: 0 },
-    );
-    return user ? user : null;
+  async validate(payload: TokenPayload): Promise<User | undefined> {
+    const user = this.usersService.findOne({
+      id: payload.sub,
+    });
+    return user;
   }
 }

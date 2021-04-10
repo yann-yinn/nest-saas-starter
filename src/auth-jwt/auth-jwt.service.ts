@@ -3,7 +3,7 @@ import { TokenPayload } from './auth-jwt.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/users.interfaces';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class AuthJwtService {

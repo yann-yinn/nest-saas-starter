@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
-import { User } from './users.interfaces';
+import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<User | any>) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
   /**
    * Create a new user, except if a user with the same email already exists
@@ -18,9 +21,9 @@ export class UsersService {
     if (existingUser) {
       return null;
     } else {
-      const user = new this.userModel(createUserDto);
-      user.password = await this.hashPassword(user.password);
-      return await user.save();
+      const newUser = await this.usersRepository.create(createUserDto);
+      newUser.password = await this.hashPassword(newUser.password);
+      return this.usersRepository.save(newUser);
     }
   }
 
@@ -28,13 +31,12 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
-  async findOne(filter: object, project?: object): Promise<User | null> {
-    const user = await this.userModel.findOne(filter, project).lean().exec();
-    return user;
+  async findOne(filter: object): Promise<User | undefined> {
+    return this.usersRepository.findOne(filter);
   }
 
-  async findOneByEmail(email: string, project?: object): Promise<User | null> {
-    return await this.userModel.findOne({ email }, project).lean().exec();
+  async findOneByEmail(email: string): Promise<User | undefined> {
+    return await this.usersRepository.findOne({ email });
   }
 
   async findOneByCredentials(credentials: {
@@ -42,12 +44,6 @@ export class UsersService {
     password: string;
   }): Promise<User | null> {
     const user = await this.findOneByEmail(credentials.email);
-    if (!user) {
-      return null;
-    }
-    if (!user.password) {
-      throw new Error('findOneByCredentials: Password field is missing');
-    }
     // compare user password with submitted password
     if (user && (await bcrypt.compare(credentials.password, user.password))) {
       return user;

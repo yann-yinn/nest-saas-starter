@@ -4,7 +4,7 @@ import { PartialType, PickType } from '@nestjs/swagger';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  readonly name!: string;
+  readonly firstName!: string;
 
   @IsString()
   @IsEmail()

@@ -24,8 +24,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [],
-      synchronize: true,
+      autoLoadEntities: true,
+      // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
+      synchronize: process.env.NODE_ENV === 'development' ? true : false,
       ssl: true,
       extra: {
         ssl: {

@@ -27,7 +27,7 @@ export class AuthSessionController {
       throw new UnauthorizedException();
     } else {
       // store the user id in session variable (thanks to express-session)
-      req.session.user = user._id;
+      req.session.user = user.id;
       return user;
     }
   }
