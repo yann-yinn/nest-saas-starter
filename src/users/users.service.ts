@@ -3,20 +3,21 @@ import { CreateUserDto } from './dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private connection: Connection,
   ) {}
 
   /**
    * Create a new user, except if a user with the same email already exists
    * Return null if a user already exists
    */
-  async create(createUserDto: CreateUserDto): Promise<User | null> {
+  public async create(createUserDto: CreateUserDto): Promise<User | null> {
     let existingUser = await this.findOneByEmail(createUserDto.email);
     if (existingUser) {
       return null;
@@ -27,16 +28,18 @@ export class UsersService {
     }
   }
 
-  async hashPassword(password: string): Promise<string> {
+  private async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
 
-  async findOne(filter: object): Promise<User | undefined> {
-    return this.usersRepository.findOne(filter);
+  public async findOne(filter: object): Promise<User | undefined> {
+    const user = this.usersRepository.findOne(filter);
+    return user;
   }
 
-  async findOneByEmail(email: string): Promise<User | undefined> {
-    return await this.usersRepository.findOne({ email });
+  public async findOneByEmail(email: string): Promise<User | undefined> {
+    const user = await this.usersRepository.findOne({ email });
+    return user;
   }
 
   async findOneByCredentials(credentials: {

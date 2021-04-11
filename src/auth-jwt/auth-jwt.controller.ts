@@ -22,6 +22,7 @@ export class AuthJwtController {
   @UseGuards(AuthGuard('jwt'))
   @Get('userinfo')
   async me(@Request() req: any) {
+    delete req.user.password;
     return req.user;
   }
 }
