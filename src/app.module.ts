@@ -5,10 +5,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import appConfig from './app.config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuthJwtModule } from './auth-jwt/auth-jwt.module';
-import { ConfigService } from '@nestjs/config';
-import { AuthSessionModule } from './auth-session/auth-session.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -30,21 +27,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       ssl: true,
       extra: JSON.parse(<string>process.env.TYPEORM_DRIVER_EXTRA),
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => {
-        return {
-          uri: config.get('mongoUrl'),
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        };
-      },
-      inject: [ConfigService],
-    }),
     StripeModule,
     UsersModule,
     AuthJwtModule,
-    AuthSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
