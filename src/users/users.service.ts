@@ -53,4 +53,21 @@ export class UsersService {
     }
     return null;
   }
+
+  public async resetPassword(credentials: {
+    email: string;
+    password: string;
+    newPassword: string;
+  }): Promise<User | null> {
+    const user = await this.findOneByCredentials({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    if (user) {
+      this.usersRepository.update(user.id, {
+        password: await this.hashPassword(credentials.newPassword),
+      });
+    }
+    return user;
+  }
 }

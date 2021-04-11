@@ -6,7 +6,10 @@
 
 ```sh
 # create a new user
-curl -X POST http://localhost:3000/api/users -d '{"firstName": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:3000/api/users -d '{"firstName": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json" -i
+
+# reset password
+curl -X POST http://localhost:3000/api/users/reset-password -d '{"password": "changeme", "email": "john@doe.fr", "newPassword": "test"}' -H "Content-Type: application/json" -H "Authorization: Bearer a.b.c" -i
 ```
 
 ### JWT (passport-jwt)
