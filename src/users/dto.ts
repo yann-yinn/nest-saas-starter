@@ -22,3 +22,18 @@ export class loginUserDto extends PickType(CreateUserDto, [
   'email',
   'password',
 ] as const) {}
+
+export class ResetPasswordDto {
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  readonly email!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly password!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly newPassword!: string;
+}
