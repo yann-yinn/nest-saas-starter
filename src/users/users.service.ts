@@ -4,23 +4,24 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
 import { User } from './users.interfaces';
 import * as bcrypt from 'bcrypt';
+import { UserDocument } from './users.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<User | any>) {}
+  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
 
   /**
-   * Create a new user, except if a user with the same email already exists
-   * Return null if a user already exists
+   * Create a new user, except if a user with the same email already exists.
    */
   async create(createUserDto: CreateUserDto): Promise<User | null> {
     let existingUser = await this.findOneByEmail(createUserDto.email);
     if (existingUser) {
       return null;
     } else {
-      const user = new this.userModel(createUserDto);
-      user.password = await this.hashPassword(user.password);
-      return await user.save();
+      const userDoc = new this.userModel(createUserDto);
+      userDoc.password = await this.hashPassword(userDoc.password);
+      const savedUserDoc = await userDoc.save();
+      return savedUserDoc.toObject();
     }
   }
 
@@ -29,12 +30,11 @@ export class UsersService {
   }
 
   async findOne(filter: object, project?: object): Promise<User | null> {
-    const user = await this.userModel.findOne(filter, project).lean().exec();
-    return user;
+    return this.userModel.findOne(filter, project).lean();
   }
 
   async findOneByEmail(email: string, project?: object): Promise<User | null> {
-    return await this.userModel.findOne({ email }, project).lean().exec();
+    return this.userModel.findOne({ email }, project).lean();
   }
 
   async findOneByCredentials(credentials: {
@@ -53,5 +53,25 @@ export class UsersService {
       return user;
     }
     return null;
+  }
+
+  public async resetPassword(credentials: {
+    email: string;
+    password: string;
+    newPassword: string;
+  }): Promise<User | null> {
+    const user = await this.findOneByCredentials({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    if (user) {
+      this.userModel.updateOne(
+        { _id: user._id },
+        {
+          password: await this.hashPassword(credentials.newPassword),
+        },
+      );
+    }
+    return user;
   }
 }
