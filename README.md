@@ -11,7 +11,7 @@
 curl -X POST http://localhost:3000/api/users -i -d '{"name": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json"
 
 # (loggin required) reset password
-curl -X POST http://localhost:3000/api/users/reset-password -i -d '{"name": "John", "email": "john@doe.fr", "password": "changeme", "newPassword", "Naoned44BZH"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:3000/api/users/reset-password -i -d '{"name": "John", "email": "john@doe.fr", "password": "changeme", "newPassword": "Naoned44BZH"}' -H "Content-Type: application/json" -H "Authorization: Bearer a.b.c"
 
 # reset password
 ```

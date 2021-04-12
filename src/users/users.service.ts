@@ -59,19 +59,20 @@ export class UsersService {
     email: string;
     password: string;
     newPassword: string;
-  }): Promise<User | null> {
+  }): Promise<void> {
     const user = await this.findOneByCredentials({
       email: credentials.email,
       password: credentials.password,
     });
     if (user) {
-      this.userModel.updateOne(
+      const passwordHash = await this.hashPassword(credentials.newPassword);
+      await this.userModel.updateOne(
         { _id: user._id },
         {
-          password: await this.hashPassword(credentials.newPassword),
+          password: passwordHash,
         },
+        { new: true },
       );
     }
-    return user;
   }
 }
