@@ -12,7 +12,7 @@ import { AdapterService } from './adapter.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import Stripe from 'stripe';
-import { createCheckoutSessionDto } from './dto';
+import { createCheckoutSessionDto } from './stripe.dto';
 
 @Controller('api/stripe')
 export class StripeController {

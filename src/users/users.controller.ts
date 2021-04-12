@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, ResetPasswordDto } from './dto';
+import { CreateUserDto, ResetPasswordDto } from './users.dto';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 

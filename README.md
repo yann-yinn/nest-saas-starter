@@ -4,12 +4,25 @@
 
 ## Test API With curl
 
+### Users
+
+```sh
+# create
+curl -X POST http://localhost:3000/api/users -i -d '{"name": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json"
+
+# change password
+```
+
 ### JWT (passport-jwt)
 
 ```sh
-# login (generate a JWT signed token)
+# LOGIN (generate a JWT signed token)
 curl -X POST http://localhost:3000/api/auth-jwt/login -d '{"email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json" -i
+```
 
+**access user info**
+
+```sh
 # access endpoints by sending the JWT as an authorization Header
 curl http://localhost:3000/api/auth-jwt/userinfo -H "Authorization: Bearer a.b.c" -i
 ```
@@ -17,8 +30,6 @@ curl http://localhost:3000/api/auth-jwt/userinfo -H "Authorization: Bearer a.b.c
 ### Server side sessions (express-session)
 
 ```sh
-# create a new user
-curl -X POST http://localhost:3000/api/users -i -d '{"name": "John", "email": "john@doe.fr", "password": "changeme"}' -H "Content-Type: application/json"
 
 
 # log created user
